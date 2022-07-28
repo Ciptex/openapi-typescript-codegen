@@ -17,6 +17,7 @@ const sendRequest = async <T>(
         method: options.method,
         cancelToken: source.token,
         validateStatus: () => true,
+        withCredentials: options.cookies ?? true
     };
 
     onCancel(() => source.cancel('The user aborted a request.'));
