@@ -1,6 +1,6 @@
 {
     "name": "@ciptex/openapi-typescript-codegen",
-    "version": "0.19.3",
+    "version": "0.19.4",
     "description": "Library that generates Typescript clients based on the OpenAPI specification.",
     "author": "Ferdi Koomen & Matthew C Duggan",
     "homepage": "https://github.com/Ciptex/openapi-typescript-codegen",
