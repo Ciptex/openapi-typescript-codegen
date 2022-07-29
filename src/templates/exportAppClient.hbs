@@ -20,7 +20,7 @@ export class {{{clientName}}} {{#if service}}extends {{{service.name}}} {{/if}}{
 
     constructor(openApiConfig?: OpenAPIConfig, HttpRequest: new (config: OpenAPIConfig2) => BaseHttpRequest = {{{httpClientRequest}}}) {
         {{#if service}}const request{{else}}this.request{{/if}} = new HttpRequest({
-            base: '{{{server}}}',
+            base: process.env.REACT_APP_{{{clientName}}}_OVERRIDE || '{{{server}}}',
             edge: openApiConfig?.edge ?? '{{#if server.edgeRegions}}{{server.edgeRegions.[0]}}{{else}}gll{{/if}}',
             version: '{{{version}}}',
             token: openApiConfig?.token,
