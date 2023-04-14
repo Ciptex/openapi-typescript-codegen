@@ -15,6 +15,7 @@ import { BaseHttpRequest } from './BaseHttpRequest';
 {{#if @root.awsSign}}
 import { SignatureV4 } from '@aws-sdk/signature-v4';
 import { Sha256 } from '@aws-crypto/sha256-js';
+import { AssumeRoleCommand, STSClient, AssumeRoleCommandOutput, Credentials } from "@aws-sdk/client-sts";
 
 {{>functions/signAWS}}
 {{/if}}
@@ -91,7 +92,37 @@ export class AxiosHttpRequest extends BaseHttpRequest {
                 const headers = await getHeaders(options, this.openApiConfig, url);
 
                 {{#if @root.awsSign}}
-                const awsSigned = await signAWS({ url, options, headers, body: body ?? formData });
+                let awsSigned = { headers: {} };
+                if(this.openApiConfig.awsRoleArn) {
+                    const awsCredentails: AssumeRoleCommandOutput = await assumeAWSRole({ awsRoleArn: this.openApiConfig.awsRoleArn }, options);
+
+                    if(!awsCredentails.Credentials) {
+                        throw new Error("Invalid AWS Role Arn");
+                    }
+                    
+                    awsSigned = await signAWS({ 
+                        credentials: awsCredentails.Credentials, 
+                        url, 
+                        options, 
+                        headers, 
+                        body: body ?? formData 
+                    });
+                }
+                else {
+                    awsSigned = await signAWS({ 
+                        credentials: {
+                            AccessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                            SecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+                            SessionToken: process.env.AWS_SESSION_TOKEN,
+                            Expiration: new Date()
+                        }, 
+                        url, 
+                        options, 
+                        headers, 
+                        body: body ?? formData 
+                    });
+                }
+                    
                 {{/if}}
 
                 if (!onCancel.isCancelled) {

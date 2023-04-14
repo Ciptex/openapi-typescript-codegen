@@ -1,5 +1,13 @@
-async function signAWS({ url, options, headers, body }: { url: URL, options: ApiRequestOptions, headers: { [key: string]: any }, body?: any }): Promise<any> {
-    if(!process.env.AWS_REGION || !process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY || !process.env.AWS_SESSION_TOKEN) {
+interface SignAWSPayload {
+    credentials: Credentials
+    url: URL, 
+    options: ApiRequestOptions, 
+    headers: { [key: string]: any }, 
+    body?: any 
+}
+
+async function signAWS({ credentials, url, options, headers, body }: SignAWSPayload): Promise<any> {
+    if(!process.env.AWS_REGION || !credentials.AccessKeyId || !credentials.SecretAccessKey || !credentials.SessionToken) {
         throw new Error("Missing AWS Credentials");
     }
     
@@ -7,14 +15,14 @@ async function signAWS({ url, options, headers, body }: { url: URL, options: Api
         service: 'execute-api',
         region: process.env.AWS_REGION,
         credentials: {
-            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-            sessionToken: process.env.AWS_SESSION_TOKEN,
+            accessKeyId: credentials.AccessKeyId,
+            secretAccessKey: credentials.SecretAccessKey,
+            sessionToken: credentials.SessionToken,
         },
         sha256: Sha256,
     });
 
-    const signed = await sigv4.sign({
+    return sigv4.sign({
         method: options.method,
         hostname: url.host,
         path: url.pathname,
@@ -23,6 +31,25 @@ async function signAWS({ url, options, headers, body }: { url: URL, options: Api
         headers: headers,
         body: body
   });
+}
 
-  return signed;
+interface AssumeAWSRolePayload {
+    awsRoleArn: string | Resolver<string>;
+}
+
+async function assumeAWSRole({ awsRoleArn }: AssumeAWSRolePayload, options: ApiRequestOptions): Promise<AssumeRoleCommandOutput> {
+    const arn = await resolve(options, awsRoleArn);
+    
+    if(!process.env.AWS_REGION || !arn) {
+        throw new Error("Missing AWS Credentials");
+    }
+
+    const stsClient = new STSClient({ region: process.env.AWS_REGION });
+    const command = new AssumeRoleCommand({
+        RoleArn: arn,
+        RoleSessionName: "session1",
+        DurationSeconds: 900
+    });
+
+    return stsClient.send(command);
 }

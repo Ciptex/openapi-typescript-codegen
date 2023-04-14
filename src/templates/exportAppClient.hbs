@@ -25,7 +25,8 @@ export class {{{clientName}}} {{#if service}}extends {{{service.name}}} {{/if}}{
             version: '{{{version}}}',
             token: openApiConfig?.token,
             accountSid: openApiConfig?.accountSid,
-            authToken: openApiConfig?.authToken
+            authToken: openApiConfig?.authToken,
+            awsRoleArn: openApiConfig?.awsRoleArn
         });
         {{#if service}}
         super(request);
