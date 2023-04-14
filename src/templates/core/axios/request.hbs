@@ -10,11 +10,16 @@ import type { ApiResult } from './ApiResult';
 import { CancelablePromise } from './CancelablePromise';
 import type { OnCancel } from './CancelablePromise';
 import type { OpenAPIConfig2 } from './OpenAPI';
-{{#if @root.exportClient}}
 import { BaseHttpRequest } from './BaseHttpRequest';
-{{else}}
-import { OpenAPI } from './OpenAPI';
+
+{{#if @root.awsSign}}
+import { SignatureV4 } from '@aws-sdk/signature-v4';
+import { Sha256 } from '@aws-crypto/sha256-js';
+
+{{>functions/signAWS}}
 {{/if}}
+
+
 {{>functions/isDefined}}
 
 
@@ -66,7 +71,6 @@ import { OpenAPI } from './OpenAPI';
 {{>functions/catchErrors}}
 
 
-{{#if @root.exportClient}}
 export class AxiosHttpRequest extends BaseHttpRequest {
     constructor(openApiConfig: OpenAPIConfig2) {
         super(openApiConfig);
@@ -84,7 +88,12 @@ export class AxiosHttpRequest extends BaseHttpRequest {
                 const url = getUrl(options, this.openApiConfig);
                 const formData = getFormData(options);
                 const body = getRequestBody(options);
-                const headers = await getHeaders(options, this.openApiConfig, formData);
+                const headers = await getHeaders(options, this.openApiConfig, url);
+
+                {{#if @root.awsSign}}
+                    const signed = await signAWS({ url, options, headers, body: body ?? formData });
+                    console.log("It worked!", signed);
+                {{/if}}
 
                 if (!onCancel.isCancelled) {
                     const response = await sendRequest(options, url, formData, body, headers, onCancel, this.openApiConfig);
@@ -92,7 +101,7 @@ export class AxiosHttpRequest extends BaseHttpRequest {
                     const responseHeader = getResponseHeader(response, options.responseHeader);
 
                     const result: ApiResult = {
-                        url,
+                        url: url.toString(),
                         ok: isSuccess(response.status),
                         status: response.status,
                         statusText: response.statusText,
@@ -109,41 +118,3 @@ export class AxiosHttpRequest extends BaseHttpRequest {
         });
     }
 }
-{{else}}
-/**
- * Request using axios client
- * @param options The request options from the the service
- * @returns CancelablePromise<T>
- * @throws ApiError
- */
-export function request<T>(options: ApiRequestOptions): CancelablePromise<T> {
-    return new CancelablePromise(async (resolve, reject, onCancel) => {
-        try {
-            const url = getUrl(options, OpenAPI);
-            const formData = getFormData(options);
-            const body = getRequestBody(options);
-            const headers = await getHeaders(options, OpenAPI, formData);
-
-            if (!onCancel.isCancelled) {
-                const response = await sendRequest(options, url, formData, body, headers, onCancel, OpenAPI);
-                const responseBody = getResponseBody(response);
-                const responseHeader = getResponseHeader(response, options.responseHeader);
-
-                const result: ApiResult = {
-                    url,
-                    ok: isSuccess(response.status),
-                    status: response.status,
-                    statusText: response.statusText,
-                    body: responseHeader || responseBody,
-                };
-
-                catchErrors(options, result);
-
-                resolve(result.body);
-            }
-        } catch (error) {
-            reject(error);
-        }
-    });
-}
-{{/if}}

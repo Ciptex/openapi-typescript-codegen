@@ -1,10 +1,11 @@
-async function getHeaders(options: ApiRequestOptions, config: OpenAPIConfig2, formData?: FormData): Promise<Record<string, string>> {
+async function getHeaders(options: ApiRequestOptions, config: OpenAPIConfig2, url: URL): Promise<Record<string, string>> {
     const token = await resolve(options, config.token);
     const accountSid = await resolve(options, config.accountSid);
     const authToken = await resolve(options, config.authToken);
 
     const headers = Object.entries({
         Accept: 'application/json',
+        host: url.hostname,
         ...options.headers,
     })
     .filter(([_, value]) => isDefined(value))

@@ -6,9 +6,9 @@ const compileWithTypescript = require('./scripts/compileWithTypescript');
 
 const TIMEOUT = 20000;
 
-function executeBrowserTestsWithStaticClient(dir, version, client, useOptions, useUnionTypes, exportClient, compile) {
+function executeBrowserTestsWithStaticClient(dir, version, client, useOptions, useUnionTypes, compile) {
     beforeAll(async () => {
-        await generate(dir, version, client, useOptions, useUnionTypes, exportClient);
+        await generate(dir, version, client, useOptions, useUnionTypes);
         await copy(dir);
         await compile(dir);
         await server.start(dir);
@@ -146,9 +146,9 @@ function executeBrowserTestsWithStaticClient(dir, version, client, useOptions, u
     });
 }
 
-function executeBrowserTestsWithInstanceClient(dir, version, client, useOptions, useUnionTypes, exportClient, compile) {
+function executeBrowserTestsWithInstanceClient(dir, version, client, useOptions, useUnionTypes, compile) {
     beforeAll(async () => {
-        await generate(dir, version, client, useOptions, useUnionTypes, exportClient);
+        await generate(dir, version, client, useOptions, useUnionTypes);
         await copy(dir);
         await compile(dir);
         await server.start(dir);

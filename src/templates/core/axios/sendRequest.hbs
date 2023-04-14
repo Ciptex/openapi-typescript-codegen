@@ -1,6 +1,6 @@
 const sendRequest = async <T>(
     options: ApiRequestOptions,
-    url: string,
+    url: URL,
     formData: FormData | undefined,
     body: any,
     headers: Record<string, string>,
@@ -8,10 +8,9 @@ const sendRequest = async <T>(
     openApiConfig: OpenAPIConfig2
 ): Promise<AxiosResponse<T>> => {
     const source = axios.CancelToken.source();
-    const newUrl = openApiConfig.edge ? url.replace("{edge}", openApiConfig.edge) : url;
 
     const requestConfig: AxiosRequestConfig = {
-        url: newUrl,
+        url: url.toString(),
         headers,
         data: body ?? formData,
         method: options.method,

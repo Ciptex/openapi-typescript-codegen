@@ -19,14 +19,3 @@ export type OpenAPIConfig2 = {
     accountSid?: string | Resolver<string>;
     authToken?: string | Resolver<string>;
 }
-
-{{#unless @root.exportClient}}
-
-export const OpenAPI: OpenAPIConfig = {
-    base: '{{{server}}}',
-    version: '{{{version}}}',
-    edge: '{{#if server.edgeRegions}}{{server.edgeRegions.[0]}}{{else}}gll{{/if}}',
-    token: undefined,
-    accountSid: undefined,
-    authToken: undefined
-};{{/unless}}

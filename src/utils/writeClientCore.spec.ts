@@ -34,19 +34,8 @@ describe('writeClientCore', () => {
         },
     };
 
-    it('should write to filesystem when exportClient false', async () => {
-        await writeClientCore(client, templates, '/', HttpClient.FETCH, false);
-
-        expect(writeFile).toBeCalledWith('/OpenAPI.ts', 'settings');
-        expect(writeFile).toBeCalledWith('/ApiError.ts', 'apiError');
-        expect(writeFile).toBeCalledWith('/ApiRequestOptions.ts', 'apiRequestOptions');
-        expect(writeFile).toBeCalledWith('/ApiResult.ts', 'apiResult');
-        expect(writeFile).toBeCalledWith('/CancelablePromise.ts', 'cancelablePromise');
-        expect(writeFile).toBeCalledWith('/request.ts', 'concreteHttpRequest');
-    });
-
-    it('should write to filesystem when exportClient true', async () => {
-        await writeClientCore(client, templates, '/', HttpClient.FETCH, true);
+    it('should write to filesystem', async () => {
+        await writeClientCore(client, templates, '/', HttpClient.AXIOS, false);
 
         expect(writeFile).toBeCalledWith('/OpenAPI.ts', 'settings');
         expect(writeFile).toBeCalledWith('/ApiError.ts', 'apiError');
@@ -54,6 +43,6 @@ describe('writeClientCore', () => {
         expect(writeFile).toBeCalledWith('/ApiResult.ts', 'apiResult');
         expect(writeFile).toBeCalledWith('/CancelablePromise.ts', 'cancelablePromise');
         expect(writeFile).toBeCalledWith('/BaseHttpRequest.ts', 'baseHttpRequest');
-        expect(writeFile).toBeCalledWith('/FetchHttpRequest.ts', 'concreteHttpRequest');
+        expect(writeFile).toBeCalledWith('/AxiosHttpRequest.ts', 'concreteHttpRequest');
     });
 });

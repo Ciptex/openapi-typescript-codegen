@@ -12,7 +12,7 @@ import { sortServicesByName } from './sortServicesByName';
  * @param client Client object, containing, models, schemas and services
  * @param templates The loaded handlebar templates
  * @param outputPath Directory to write the generated files to
- * @param httpClient The selected httpClient (fetch, xhr or node)
+ * @param httpClient The selected httpClient (axios)
  * @param clientName Client class name
  * @param postfix Service name postfix
  */
@@ -22,7 +22,8 @@ export async function writeAppClient(
     outputPath: string,
     httpClient: HttpClient,
     clientName: string,
-    postfix: string
+    postfix: string,
+    awsSign: boolean
 ): Promise<void> {
     await writeFile(
         resolve(outputPath, 'client.ts'),
@@ -39,6 +40,7 @@ export async function writeAppClient(
             server: client.server,
             version: client.version,
             postfix,
+            awsSign,
         })
     );
 }

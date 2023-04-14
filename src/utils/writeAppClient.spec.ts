@@ -35,7 +35,7 @@ describe('writeAppClient', () => {
             },
         };
 
-        await writeAppClient(client, templates, '/', HttpClient.FETCH, 'AppClient', '');
+        await writeAppClient(client, templates, '/', HttpClient.AXIOS, 'AppClient', '', false);
         expect(writeFile).toBeCalledWith('/client.ts', 'client');
     });
 });

@@ -20,9 +20,9 @@ export type Options = {
     exportModels?: boolean;
     exportSchemas?: boolean;
     postfix?: string;
-    exportClient?: boolean;
     request?: string;
     clientName?: string;
+    awsSign?: boolean;
     write?: boolean;
 };
 
@@ -32,7 +32,7 @@ export type Options = {
  * service layer, etc.
  * @param input The relative location of the OpenAPI spec
  * @param output The relative location of the output directory
- * @param httpClient The selected httpClient (fetch, xhr, node or axios)
+ * @param httpClient The selected httpClient (axios)
  * @param useOptions Use options or arguments functions
  * @param useUnionTypes Use union types instead of enums
  * @param exportCore: Generate core client classes
@@ -40,15 +40,15 @@ export type Options = {
  * @param exportModels: Generate models
  * @param exportSchemas: Generate schemas
  * @param postfix: Service name postfix
- * @param exportClient: Generate client class
  * @param clientName: Custom client class name
+ * @param awsSign: Sign Requests with AWS V4 Signiture
  * @param request: Path to custom request file
  * @param write Write the files to disk (true or false)
  */
 export async function generate({
     input,
     output,
-    httpClient = HttpClient.FETCH,
+    httpClient = HttpClient.AXIOS,
     useOptions = false,
     useUnionTypes = false,
     exportCore = true,
@@ -56,8 +56,8 @@ export async function generate({
     exportModels = true,
     exportSchemas = false,
     postfix = 'Service',
-    exportClient = false,
     clientName = 'AppClient',
+    awsSign = false,
     request,
     write = true,
 }: Options): Promise<void> {
@@ -72,7 +72,7 @@ export async function generate({
     switch (openApiVersion) {
         case OpenApiVersion.V3: {
             const client = parseV3(openApi);
-            const clientFinal = postProcessClient(client, exportClient);
+            const clientFinal = postProcessClient(client);
             if (!write) break;
             await writeClient(
                 clientFinal,
@@ -86,8 +86,8 @@ export async function generate({
                 exportModels,
                 exportSchemas,
                 postfix,
-                exportClient,
                 clientName,
+                awsSign,
                 request
             );
             break;

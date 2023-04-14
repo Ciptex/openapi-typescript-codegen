@@ -49,7 +49,6 @@ $ openapi --help
     --exportSchemas <value>   Write schemas to disk (default: false)
     --postfix <value>         Service name postfix (default: "Service")
     --request <value>         Path to custom request file
-    --exportClient <value>    Generate and write client class to disk (default: false)
     --name <value>            Custom client class name (default: "AppClient")
     -h, --help                display help for command
 
@@ -344,15 +343,15 @@ interface ModelWithNullableString {
 }
 ```
 
-### Generate client instance with `--exportClient` option
+### Generate client instance
 
 The OpenAPI generator allows to create client instances to support the multiple backend services use case.
-The generated client uses an instance of the server configuration and not the global `OpenAPI` constant.
+The generated client uses an instance of the server configuration.
 
-To generate a client instance, use `--exportClient` option. To set a custom name to the client class, use `--name` option.
+To set a custom name to the client class, use `--name` option.
 
 ```
-openapi --input ./spec.json --output ./dist --exportClient true --name DemoAppClient
+openapi --input ./spec.json --output ./dist --name DemoAppClient
 ```
 
 The generated client will be exported from the `index` file and can be used as shown below:

@@ -22,8 +22,7 @@ import { sortServicesByName } from './sortServicesByName';
  * @param exportModels: Generate models
  * @param exportSchemas: Generate schemas
  * @param postfix: Service name postfix
- * @param exportClient: Generate client class
- * @param httpClient The selected httpClient (fetch, xhr or node)
+ * @param httpClient The selected httpClient (axios)
  */
 export async function writeClientIndex(
     client: Client,
@@ -36,8 +35,8 @@ export async function writeClientIndex(
     exportModels: boolean,
     exportSchemas: boolean,
     postfix: string,
-    exportClient: boolean,
-    httpClient: HttpClient
+    httpClient: HttpClient,
+    awsSign: boolean
 ): Promise<void> {
     await writeFile(
         resolve(outputPath, 'index.ts'),
@@ -46,7 +45,6 @@ export async function writeClientIndex(
             exportServices,
             exportModels,
             exportSchemas,
-            exportClient,
             useUnionTypes,
             postfix,
             server: client.server,
@@ -55,6 +53,7 @@ export async function writeClientIndex(
             services: sortServicesByName(client.services),
             httpRequestName: getHttpRequestName(httpClient),
             clientName,
+            awsSign,
         })
     );
 }

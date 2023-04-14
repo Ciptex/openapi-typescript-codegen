@@ -39,7 +39,7 @@ describe('writeClient', () => {
             client,
             templates,
             './dist',
-            HttpClient.FETCH,
+            HttpClient.AXIOS,
             false,
             false,
             true,
@@ -47,8 +47,8 @@ describe('writeClient', () => {
             true,
             true,
             '',
-            false,
-            'AppClient'
+            'AppClient',
+            false
         );
 
         expect(rmdir).toBeCalled();

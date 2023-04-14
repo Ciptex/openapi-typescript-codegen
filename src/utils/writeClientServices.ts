@@ -14,11 +14,10 @@ const VERSION_TEMPLATE_STRING = 'OpenAPI.VERSION';
  * @param services Array of Services to write
  * @param templates The loaded handlebar templates
  * @param outputPath Directory to write the generated files to
- * @param httpClient The selected httpClient (fetch, xhr, node or axios)
+ * @param httpClient The selected httpClient (axios)
  * @param useUnionTypes Use union types instead of enums
  * @param useOptions Use options or arguments functions
  * @param postfix: Service name postfix
- * @param exportClient Create client class
  */
 export async function writeClientServices(
     services: Service[],
@@ -28,7 +27,7 @@ export async function writeClientServices(
     useUnionTypes: boolean,
     useOptions: boolean,
     postfix: string,
-    exportClient: boolean
+    awsSign: boolean
 ): Promise<void> {
     for (const service of services) {
         const file = resolve(outputPath, `${service.name}${postfix}.ts`);
@@ -40,7 +39,7 @@ export async function writeClientServices(
             useVersion,
             useOptions,
             postfix,
-            exportClient,
+            awsSign,
             httpClientRequest: getHttpRequestName(httpClient),
         });
         await writeFile(file, format(templateResult));

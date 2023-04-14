@@ -46,8 +46,8 @@ describe('writeClientIndex', () => {
             true,
             false,
             'Service',
-            false,
-            HttpClient.FETCH
+            HttpClient.AXIOS,
+            false
         );
         expect(writeFile).toBeCalledWith('/index.ts', 'index');
     });

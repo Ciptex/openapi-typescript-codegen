@@ -25,6 +25,7 @@ import functionIsString from '../templates/core/functions/isString.hbs';
 import functionIsStringWithValue from '../templates/core/functions/isStringWithValue.hbs';
 import functionIsSuccess from '../templates/core/functions/isSuccess.hbs';
 import functionResolve from '../templates/core/functions/resolve.hbs';
+import functionSignAWS from '../templates/core/functions/signAWS.hbs';
 import templateCoreSettings from '../templates/core/OpenAPI.hbs';
 import templateAppClient from '../templates/exportAppClient.hbs';
 import templateExportModel from '../templates/exportModel.hbs';
@@ -144,6 +145,7 @@ export function registerHandlebarTemplates(root: {
     Handlebars.registerPartial('functions/getFormData', Handlebars.template(functionGetFormData));
     Handlebars.registerPartial('functions/getQueryString', Handlebars.template(functionGetQueryString));
     Handlebars.registerPartial('functions/getUrl', Handlebars.template(functionGetUrl));
+    Handlebars.registerPartial('functions/signAWS', Handlebars.template(functionSignAWS));
     Handlebars.registerPartial('functions/isBlob', Handlebars.template(functionIsBlob));
     Handlebars.registerPartial('functions/isDefined', Handlebars.template(functionIsDefined));
     Handlebars.registerPartial('functions/isFormData', Handlebars.template(functionIsFormData));

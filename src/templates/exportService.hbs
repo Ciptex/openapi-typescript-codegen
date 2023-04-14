@@ -6,24 +6,15 @@ import type { {{{this}}} } from '../models/{{{this}}}';
 {{/each}}
 {{/if}}
 import type { CancelablePromise } from '../core/CancelablePromise';
-{{#if @root.exportClient}}
 import { BaseHttpRequest } from '../core/BaseHttpRequest';
-{{else}}
-import { request as __request } from '../core/request';
-{{#if @root.useVersion}}
-import { OpenAPI } from '../core/OpenAPI';
-{{/if}}
-{{/if}}
 type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 
 export class {{{name}}}{{{@root.postfix}}} {
-    {{#if @root.exportClient}}
     private httpRequest: BaseHttpRequest;
 
     constructor(httpRequest: BaseHttpRequest) {
         this.httpRequest = httpRequest;
     }
-    {{/if}}
 
     {{#each operations}}
     /**
@@ -48,8 +39,8 @@ export class {{{name}}}{{{@root.postfix}}} {
     {{/each}}
     * @throws ApiError
     */
-    public{{#unless @root.exportClient}} static{{/unless}} {{{name}}}({{>parameters}}): CancelablePromise<{{>result}}> {
-        return {{#if @root.exportClient}}this.httpRequest.request{{else}}__request{{/if}}({
+    public {{{name}}}({{>parameters}}): CancelablePromise<{{>result}}> {
+        return this.httpRequest.request({
             method: '{{{method}}}',
             path: `{{{path}}}`,
             {{#if parametersCookie}}

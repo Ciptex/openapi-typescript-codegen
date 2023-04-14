@@ -1,7 +1,7 @@
-function getUrl(options: ApiRequestOptions, config: OpenAPIConfig2): string {
-    const url = `${config.base}${options.path}`;
+function getUrl(options: ApiRequestOptions, config: OpenAPIConfig2): URL {
+    const url = new URL(config.edge ? `${config.base.replace("{edge}", config.edge)}${options.path}` : `${config.base}${options.path}`);
     if (options.query) {
-        return `${url}${getQueryString(options.query)}`;
+        return new URL(`${url.toString()}${getQueryString(options.query)}`);
     }
 
     return url;

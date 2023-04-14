@@ -6,7 +6,7 @@ import { registerHandlebarHelpers } from './registerHandlebarHelpers';
 describe('registerHandlebarHelpers', () => {
     it('should register the helpers', () => {
         registerHandlebarHelpers({
-            httpClient: HttpClient.FETCH,
+            httpClient: HttpClient.AXIOS,
             useOptions: false,
             useUnionTypes: false,
         });

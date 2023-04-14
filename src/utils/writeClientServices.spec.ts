@@ -35,7 +35,7 @@ describe('writeClientServices', () => {
             },
         };
 
-        await writeClientServices(services, templates, '/', HttpClient.FETCH, false, false, 'Service', false);
+        await writeClientServices(services, templates, '/', HttpClient.AXIOS, false, false, 'Service', false);
         expect(writeFile).toBeCalledWith('/UserService.ts', 'service');
     });
 });

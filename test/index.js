@@ -13,8 +13,8 @@ const generate = async (input, output) => {
         exportSchemas: false,
         exportModels: true,
         exportServices: true,
-        exportClient: true,
         clientName: 'ContentClient',
+        awsSign: true,
     });
 };
 

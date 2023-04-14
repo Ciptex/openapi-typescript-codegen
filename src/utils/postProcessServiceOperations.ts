@@ -2,7 +2,7 @@ import type { Operation } from '../client/interfaces/Operation';
 import type { Service } from '../client/interfaces/Service';
 import { flatMap } from './flatMap';
 
-export function postProcessServiceOperations(service: Service, exportClient: boolean): Operation[] {
+export function postProcessServiceOperations(service: Service): Operation[] {
     const names = new Map<string, number>();
 
     return service.operations.map(operation => {
@@ -22,10 +22,7 @@ export function postProcessServiceOperations(service: Service, exportClient: boo
         names.set(name, index + 1);
 
         // Update the operation path with the dynamically injected version
-        clone.path = clone.path.replace(
-            '${apiVersion}',
-            exportClient ? '${this.httpRequest.openApiConfig.version}' : '${OpenAPI.VERSION}'
-        );
+        clone.path = clone.path.replace('${apiVersion}', '${this.httpRequest.openApiConfig.version}');
 
         return clone;
     });

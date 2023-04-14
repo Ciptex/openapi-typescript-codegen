@@ -1,0 +1,26 @@
+async function signAWS({ url, options, headers, body }: { url: URL, options: ApiRequestOptions, headers: { [key: string]: any }, body?: any }): Promise<any> {
+    if(!process.env.AWS_REGION || !process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY || !process.env.AWS_SESSION_TOKEN) {
+        return;
+    }
+    
+    const sigv4 = new SignatureV4({
+        service: 'execute-api',
+        region: process.env.AWS_REGION,
+        credentials: {
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+            sessionToken: process.env.AWS_SESSION_TOKEN,
+        },
+        sha256: Sha256,
+    });
+
+    const signed = await sigv4.sign({
+        method: options.method,
+        hostname: url.host,
+        path: url.pathname,
+        protocol: url.protocol,
+        query: Object.fromEntries(url.searchParams),
+        headers: headers,
+        body: body
+  });
+}

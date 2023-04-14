@@ -17,7 +17,7 @@ import { writeClientServices } from './writeClientServices';
  * @param client Client object with all the models, services, etc.
  * @param templates Templates wrapper with all loaded Handlebars templates
  * @param output The relative location of the output directory
- * @param httpClient The selected httpClient (fetch, xhr, node or axios)
+ * @param httpClient The selected httpClient (axios)
  * @param useOptions Use options or arguments functions
  * @param useUnionTypes Use union types instead of enums
  * @param exportCore: Generate core client classes
@@ -26,8 +26,8 @@ import { writeClientServices } from './writeClientServices';
  * @param exportSchemas: Generate schemas
  * @param exportSchemas: Generate schemas
  * @param postfix: Service name postfix
- * @param exportClient: Generate client class
  * @param clientName: Custom client class name
+ * @param awsSign: Sign Requests with AWS V4 Signiture
  * @param request: Path to custom request file
  */
 export async function writeClient(
@@ -42,8 +42,8 @@ export async function writeClient(
     exportModels: boolean,
     exportSchemas: boolean,
     postfix: string,
-    exportClient: boolean,
     clientName: string,
+    awsSign: boolean,
     request?: string
 ): Promise<void> {
     const outputPath = resolve(process.cwd(), output);
@@ -59,7 +59,7 @@ export async function writeClient(
     if (exportCore) {
         await rmdir(outputPathCore);
         await mkdir(outputPathCore);
-        await writeClientCore(client, templates, outputPathCore, httpClient, exportClient, request);
+        await writeClientCore(client, templates, outputPathCore, httpClient, awsSign, request);
     }
 
     if (exportServices) {
@@ -73,7 +73,7 @@ export async function writeClient(
             useUnionTypes,
             useOptions,
             postfix,
-            exportClient
+            awsSign
         );
     }
 
@@ -89,11 +89,9 @@ export async function writeClient(
         await writeClientModels(client.models, templates, outputPathModels, httpClient, useUnionTypes);
     }
 
-    if (exportClient) {
-        await writeAppClient(client, templates, outputPath, httpClient, clientName, postfix);
-    }
+    await writeAppClient(client, templates, outputPath, httpClient, clientName, postfix, awsSign);
 
-    if (exportCore || exportServices || exportSchemas || exportModels || exportClient) {
+    if (exportCore || exportServices || exportSchemas || exportModels) {
         await mkdir(outputPath);
         await writeClientIndex(
             client,
@@ -106,8 +104,8 @@ export async function writeClient(
             exportModels,
             exportSchemas,
             postfix,
-            exportClient,
-            httpClient
+            httpClient,
+            awsSign
         );
     }
 }

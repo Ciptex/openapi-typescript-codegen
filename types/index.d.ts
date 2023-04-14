@@ -1,14 +1,11 @@
 export declare enum HttpClient {
-    FETCH = 'fetch',
-    XHR = 'xhr',
-    NODE = 'node',
     AXIOS = 'axios',
 }
 
 export type Options = {
     input: string | Record<string, any>;
     output: string;
-    httpClient?: HttpClient | 'fetch' | 'xhr' | 'node' | 'axios';
+    httpClient?: HttpClient | 'axios';
     useOptions?: boolean;
     useUnionTypes?: boolean;
     exportCore?: boolean;
@@ -18,6 +15,8 @@ export type Options = {
     postfix?: string;
     request?: string;
     write?: boolean;
+    clientName?: string;
+    awsSign?: false;
 };
 
 export declare function generate(options: Options): Promise<void>;

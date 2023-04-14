@@ -4,7 +4,7 @@ import { registerHandlebarTemplates } from './registerHandlebarTemplates';
 describe('registerHandlebarTemplates', () => {
     it('should return correct templates', () => {
         const templates = registerHandlebarTemplates({
-            httpClient: HttpClient.FETCH,
+            httpClient: HttpClient.AXIOS,
             useOptions: false,
             useUnionTypes: false,
         });

@@ -8,21 +8,20 @@ async function gen(version, postfix) {
     await OpenAPI.generate({
         input: `./test/spec/v${version}${postfix}.json`,
         output: `./test/generated/v${version}_client${postfix}`,
-        httpClient: OpenAPI.HttpClient.FETCH,
+        httpClient: OpenAPI.HttpClient.AXIOS,
         useOptions: false,
         useUnionTypes: false,
         exportCore: true,
         exportSchemas: true,
         exportModels: true,
         exportServices: true,
-        exportClient: true,
         clientName: 'TestClient',
     });
     return glob.sync(`./test/generated/v${version}_client${postfix}/**/*.ts`);
 }
 
 describe('v3', () => {
-    it('should generate with exportClient', async () => {
+    it('should generate', async () => {
         (await gen(3, '')).forEach(file => {
             const content = fs.readFileSync(file, 'utf8').toString();
             expect(content).toMatchSnapshot(file);

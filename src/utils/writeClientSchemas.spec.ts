@@ -47,7 +47,7 @@ describe('writeClientSchemas', () => {
             },
         };
 
-        await writeClientSchemas(models, templates, '/', HttpClient.FETCH, false);
+        await writeClientSchemas(models, templates, '/', HttpClient.AXIOS, false);
 
         expect(writeFile).toBeCalledWith('/$User.ts', 'schema');
     });
