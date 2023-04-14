@@ -1,6 +1,6 @@
 async function signAWS({ url, options, headers, body }: { url: URL, options: ApiRequestOptions, headers: { [key: string]: any }, body?: any }): Promise<any> {
     if(!process.env.AWS_REGION || !process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY || !process.env.AWS_SESSION_TOKEN) {
-        return;
+        throw new Error("Missing AWS Credentials");
     }
     
     const sigv4 = new SignatureV4({
@@ -23,4 +23,6 @@ async function signAWS({ url, options, headers, body }: { url: URL, options: Api
         headers: headers,
         body: body
   });
+
+  return signed;
 }
