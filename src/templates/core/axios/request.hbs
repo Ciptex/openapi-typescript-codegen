@@ -91,12 +91,11 @@ export class AxiosHttpRequest extends BaseHttpRequest {
                 const headers = await getHeaders(options, this.openApiConfig, url);
 
                 {{#if @root.awsSign}}
-                    const signed = await signAWS({ url, options, headers, body: body ?? formData });
-                    console.log("It worked!", signed);
+                const awsSigned = await signAWS({ url, options, headers, body: body ?? formData });
                 {{/if}}
 
                 if (!onCancel.isCancelled) {
-                    const response = await sendRequest(options, url, formData, body, headers, onCancel, this.openApiConfig);
+                    const response = await sendRequest(options, url, formData, body, {{#if @root.awsSign}}awsSigned.headers{{else}}headers{{/if}}, onCancel, this.openApiConfig);
                     const responseBody = getResponseBody(response);
                     const responseHeader = getResponseHeader(response, options.responseHeader);
 
