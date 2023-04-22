@@ -5,7 +5,9 @@ async function getHeaders(options: ApiRequestOptions, config: OpenAPIConfig2, ur
 
     const headers = Object.entries({
         Accept: 'application/json',
+        {{#if @root.awsSign}}
         host: url.hostname,
+        {{/if}}
         ...options.headers,
     })
     .filter(([_, value]) => isDefined(value))
