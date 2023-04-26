@@ -60,6 +60,7 @@ export async function writeClient(
         await rmdir(outputPathCore);
         await mkdir(outputPathCore);
         await writeClientCore(client, templates, outputPathCore, httpClient, awsSign, request);
+        await writeAppClient(client, templates, outputPath, httpClient, clientName, postfix, awsSign);
     }
 
     if (exportServices) {
@@ -88,8 +89,6 @@ export async function writeClient(
         await mkdir(outputPathModels);
         await writeClientModels(client.models, templates, outputPathModels, httpClient, useUnionTypes);
     }
-
-    await writeAppClient(client, templates, outputPath, httpClient, clientName, postfix, awsSign);
 
     if (exportCore || exportServices || exportSchemas || exportModels) {
         await mkdir(outputPath);
