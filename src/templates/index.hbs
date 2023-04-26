@@ -42,4 +42,6 @@ export { {{{name}}}{{{@root.postfix}}} } from './services/{{{name}}}{{{@root.pos
 {{/if}}
 {{/if}}
 
-export { {{{clientName}}} } from './client';
+{{#if @root.exportCore}}
+export { {{{@root.clientName}}} } from './client';
+{{/if}}
