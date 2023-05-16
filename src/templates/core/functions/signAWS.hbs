@@ -29,7 +29,7 @@ async function signAWS({ credentials, url, options, headers, body }: SignAWSPayl
         protocol: url.protocol,
         query: Object.fromEntries(url.searchParams),
         headers: headers,
-        body: body
+        body: JSON.stringify(body)
   });
 }
 

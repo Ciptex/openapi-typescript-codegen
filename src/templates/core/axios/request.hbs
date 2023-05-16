@@ -116,10 +116,10 @@ export class AxiosHttpRequest extends BaseHttpRequest {
                             SessionToken: process.env.AWS_SESSION_TOKEN,
                             Expiration: new Date()
                         }, 
-                        url, 
-                        options, 
-                        headers, 
-                        body: body ?? formData 
+                        url,
+                        options,
+                        headers,
+                        body: body ?? formData
                     });
                 }
                     
