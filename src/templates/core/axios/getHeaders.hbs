@@ -29,7 +29,7 @@ async function getHeaders(options: ApiRequestOptions, config: OpenAPIConfig2, ur
         headers['Authorization'] = `Basic ${credentials}`;
     }
     
-	if (options.body) {
+	if ({{#if @root.awsSign}}isDefined(options.body){{else}}options.body{{/if}}) {
 		if (options.mediaType) {
 			headers['Content-Type'] = options.mediaType;
 		} else if (isBlob(options.body)) {

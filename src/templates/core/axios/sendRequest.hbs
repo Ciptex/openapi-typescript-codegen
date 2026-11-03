@@ -19,6 +19,52 @@ const sendRequest = async <T>(
         withCredentials: (options.cookies && Object.keys(options.cookies).length > 0) ? true : undefined
     };
 
+    {{#if @root.awsSign}}
+    const adapter = axios.defaults.adapter;
+    if (!adapter) {
+        throw new Error('Missing Axios adapter');
+    }
+
+    requestConfig.adapter = async config => {
+        const credentials = openApiConfig.awsRoleArn
+            ? (await assumeAWSRole({ awsRoleArn: openApiConfig.awsRoleArn }, options)).Credentials
+            : {
+                AccessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                SecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+                SessionToken: process.env.AWS_SESSION_TOKEN,
+                Expiration: undefined,
+            };
+        if (!credentials) {
+            throw new Error('Invalid AWS Role Arn');
+        }
+
+        const headers = config.headers ?? {};
+        let data = config.data;
+        if (isFormData(data)) {
+            delete headers['Content-Type'];
+            Object.assign(headers, data.getHeaders());
+        }
+
+        // The signature and the adapter must use the same bytes, including multipart boundaries.
+        if (data && typeof data.pipe === 'function') {
+            const stream = new PassThrough();
+            data.once('error', (error: Error) => stream.destroy(error));
+            data.pipe(stream);
+            const chunks: Buffer[] = [];
+            for await (const chunk of stream) {
+                chunks.push(chunk);
+            }
+            data = Buffer.concat(chunks);
+        } else if (data && isBlob(data)) {
+            data = Buffer.from(await data.arrayBuffer());
+        }
+
+        const signed = await signAWS({ credentials, url, options, headers, body: data });
+        source.token.throwIfRequested();
+        return adapter({ ...config, data, headers: signed.headers });
+    };
+    {{/if}}
+
     onCancel(() => source.cancel('The user aborted a request.'));
 
 	try {

@@ -7,7 +7,7 @@ interface SignAWSPayload {
 }
 
 async function signAWS({ credentials, url, options, headers, body }: SignAWSPayload): Promise<any> {
-    if(!process.env.AWS_REGION || !credentials.AccessKeyId || !credentials.SecretAccessKey || !credentials.SessionToken) {
+    if(!process.env.AWS_REGION || !credentials.AccessKeyId || !credentials.SecretAccessKey) {
         throw new Error("Missing AWS Credentials");
     }
     
@@ -22,14 +22,19 @@ async function signAWS({ credentials, url, options, headers, body }: SignAWSPayl
         sha256: Sha256,
     });
 
+    const query: Record<string, string[]> = Object.create(null);
+    url.searchParams.forEach((value, key) => {
+        (query[key] ??= []).push(value);
+    });
+
     return sigv4.sign({
         method: options.method,
         hostname: url.host,
         path: url.pathname,
         protocol: url.protocol,
-        query: Object.fromEntries(url.searchParams),
+        query: query,
         headers: headers,
-        body: JSON.stringify(body)
+        body: body
   });
 }
 

@@ -1,5 +1,5 @@
 const getRequestBody = (options: ApiRequestOptions): any => {
-	if (options.body) {
+	if ({{#if @root.awsSign}}isDefined(options.body){{else}}options.body{{/if}}) {
 		return options.body;
 	}
 	return undefined;
